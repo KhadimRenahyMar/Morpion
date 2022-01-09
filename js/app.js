@@ -2,6 +2,7 @@ let app = {
     body: null,
     nameBx: null,
     container: null,
+    board: null,
     form: null,
     firstLabel: null,
     firstInputBx: null, 
@@ -9,24 +10,35 @@ let app = {
     secondInputBx: null,
     secondLabel: null,
     secondInput: null,
-
     submitBtn: null,
+
     playerOne: {
         name: '', 
         symbol: 'cross',
         getsToPlay: true,
+        cellSequence: [],
+        click: 0,
     },
     playerTwo: {
         name: '',
         symbol: 'circle',
         getsToPlay: false,
+        cellSequence: [],
+        click: 0,
     },
 
-
-    board: null,
-    cell: null,
-    nCell: 0,
     cellIndex: [],
+
+    wins: [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 2],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ],
 
     init(){
         app.createPlayerBx();
@@ -34,24 +46,6 @@ let app = {
         app.displayMorpion();
         app.createBoard();
         app.cellClickHandler();
-    },
-
-    createBoard(){
-        let row = 3;
-        let cells = 3;
-
-        for(let rowIndex = 0; rowIndex < row; rowIndex++){
-            let nRow = document.createElement('div');
-            nRow.classList.add('row');
-            app.board.append(nRow);
-
-            for(let xCell = 0; xCell < cells; xCell++){
-                let cell = document.createElement('div');
-                cell.classList.add('cell');
-                nRow.append(cell);
-                app.cellIndex.push(cell);
-            }    
-        }
     },
 
     createPlayerBx(){
@@ -139,19 +133,41 @@ let app = {
         
     },
 
+    createBoard(){
+        let row = 3;
+        let cells = 3;
+        let nCell = -1;
+        
+        for(let rowIndex = 0; rowIndex < row; rowIndex++){
+            let nRow = document.createElement('div');
+            nRow.classList.add('row');
+            app.board.append(nRow);
+
+            for(let xCell = 0; xCell < cells; xCell++){
+                let cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.isChecked = false;
+                nCell += 1;
+                cell.value = nCell;
+                nRow.append(cell);
+                app.cellIndex.push(cell);
+            }    
+        }
+    },
+    
     displayMorpion(){
         app.board = document.querySelector('.c-morpion');
         app.container.append(app.board);
     },
 
 
-    displayCross(){
+    createCross(){
         let crossEl = document.createElement('div');
         crossEl.classList.add('cross');
         return crossEl;
     },
 
-    displayCircle(){
+    createCircle(){
         let circleEl = document.createElement('div');
         circleEl.classList.add('circle');
         return circleEl;
@@ -165,19 +181,49 @@ let app = {
 
     turns(event){
         let cell = event.target;
-        if(app.playerOne.getsToPlay === true){
-            let cross = app.displayCross();
-            cell.append(cross);
-            app.playerOne.getsToPlay = false;
-            app.playerTwo.getsToPlay = true;
-        }
-        else{
-            let circle = app.displayCircle();
-            cell.append(circle);
-            app.playerOne.getsToPlay = true;
-            app.playerTwo.getsToPlay = false;
+        if(cell.isChecked === false){
+            if(app.playerOne.getsToPlay === true){
+                let cross = app.createCross();
+                cell.append(cross);
+                cell.isChecked = true;
+                app.playerOne.click += 1;
+                cell.hasCross = true;
+                app.playerOne.cellSequence.push(cell.value);
+                
+                app.playerOne.getsToPlay = false;
+                app.playerTwo.getsToPlay = true;
+            }
+            else{
+                let circle = app.createCircle();
+                cell.append(circle);
+
+                cell.isChecked = true;
+                app.playerTwo.cellSequence.push(cell.value);
+
+                app.playerOne.getsToPlay = true;
+                app.playerTwo.getsToPlay = false;
+            }
+            if(app.playerOne.click > 2){
+                if(app.playerOne.getsToPlay === false){
+                    app.youWin(1, app.playerOne.cellSequence);
+                }
+                else if(app.playerTwo.getsToPlay === false){
+                    app.youWin(2, app.playerTwo.cellSequence);
+                }
+            }
         }
     },
+
+    youWin(nPlayer, playerSeq){
+        var result = app.wins.some(function(ar) {
+            return ar.every(function(el) {
+                return playerSeq.indexOf(el) != -1;
+            });
+        });
+        if (result === true){
+            alert(`Player ${nPlayer} Wins !`);
+        }
+    }
 
 
 };
