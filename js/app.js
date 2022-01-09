@@ -2,6 +2,8 @@ let app = {
     body: null,
     nameBx: null,
     container: null,
+    playerOneBx: null,
+    playerTwoBx: null,
     board: null,
     form: null,
     firstLabel: null,
@@ -11,28 +13,29 @@ let app = {
     secondLabel: null,
     secondInput: null,
     submitBtn: null,
+    winMessage:null,
 
     playerOne: {
         name: '', 
         symbol: 'cross',
         getsToPlay: true,
         cellSequence: [],
-        click: 0,
     },
     playerTwo: {
         name: '',
         symbol: 'circle',
         getsToPlay: false,
         cellSequence: [],
-        click: 0,
     },
+
+    click: 0,
 
     cellIndex: [],
 
     wins: [
         [0, 1, 2],
         [3, 4, 5],
-        [6, 7, 2],
+        [6, 7, 8],
         [0, 3, 6],
         [1, 4, 7],
         [2, 5, 8],
@@ -43,9 +46,6 @@ let app = {
     init(){
         app.createPlayerBx();
         app.submitBtnHandler();
-        app.displayMorpion();
-        app.createBoard();
-        app.cellClickHandler();
     },
 
     createPlayerBx(){
@@ -109,35 +109,39 @@ let app = {
         let secondInput = document.querySelector('input[name=playerTwo]');
         app.playerOne.name = firstInput.value;
         app.playerTwo.name = secondInput.value;
+
+        app.createBoard();
         app.displayPlayerNames();
+        
     },
 
     displayPlayerNames(){
-        let playerOneBx = document.createElement('div');
-        playerOneBx.classList.add('playerBx');
-        let playerTwoBx = document.createElement('div');
-        playerTwoBx.classList.add('playerBx');
+        app.playerOneBx = document.createElement('div');
+        app.playerOneBx.classList.add('playerBx');
+        app.playerTwoBx = document.createElement('div');
+        app.playerTwoBx.classList.add('playerBx');
 
-        app.container.insertBefore(playerOneBx, app.board);
-        app.container.insertBefore(playerTwoBx, app.board.nextSibling);
+        app.container.insertBefore(app.playerOneBx, app.board);
+        app.container.insertBefore(app.playerTwoBx, app.board.nextSibling);
         
         let playerOneName = document.createElement('h3');
         playerOneName.classList.add('playerNames');
         playerOneName.textContent = `Player One : ${app.playerOne.name}`;
-        playerOneBx.append(playerOneName);
+        app.playerOneBx.append(playerOneName);
 
         let playerTwoName = document.createElement('h3');
         playerTwoName.classList.add('playerNames');
         playerTwoName.textContent = `Player Two: ${app.playerTwo.name}`;
-        playerTwoBx.append(playerTwoName);
-        
+        app.playerTwoBx.append(playerTwoName);
     },
 
     createBoard(){
+        app.board = document.querySelector('.board');
+        app.board.classList.add('c-morpion');
         let row = 3;
         let cells = 3;
         let nCell = -1;
-        
+
         for(let rowIndex = 0; rowIndex < row; rowIndex++){
             let nRow = document.createElement('div');
             nRow.classList.add('row');
@@ -153,11 +157,13 @@ let app = {
                 app.cellIndex.push(cell);
             }    
         }
+        app.displayBoard();
     },
     
-    displayMorpion(){
-        app.board = document.querySelector('.c-morpion');
+    displayBoard(){
         app.container.append(app.board);
+
+        app.cellClickHandler();
     },
 
 
@@ -186,8 +192,8 @@ let app = {
                 let cross = app.createCross();
                 cell.append(cross);
                 cell.isChecked = true;
-                app.playerOne.click += 1;
-                cell.hasCross = true;
+                //compteur d'interaction
+                app.click += 1;
                 app.playerOne.cellSequence.push(cell.value);
                 
                 app.playerOne.getsToPlay = false;
@@ -203,7 +209,9 @@ let app = {
                 app.playerOne.getsToPlay = true;
                 app.playerTwo.getsToPlay = false;
             }
-            if(app.playerOne.click > 2){
+            //calcul condition victoire si joueur 1 à fait au moins 2 mouvements
+            if(app.click > 2){
+                //lance l'évaluation de la victoire à la fin du tour du joueur
                 if(app.playerOne.getsToPlay === false){
                     app.youWin(app.playerOne.name, app.playerOne.cellSequence);
                 }
@@ -221,11 +229,35 @@ let app = {
             });
         });
         if (winCheck === true){
-            alert(`${player} Wins !`);
+            console.log(`${player} Wins !`);
+            let winner = player;
+            app.displayWinMessage(winner);
+            let replay = confirm('Voulez-vous rejouer?');
+            if(replay === true){
+                app.gameOver();
+            }
         }
-    }
+    },
 
+    displayWinMessage(player){
+        app.winMessage = document.createElement('h3');
+        app.winMessage.textContent = `${player} wins !`;
+        app.winMessage.classList.add('winMessage');
+        app.body.insertBefore(app.winMessage, app.container);
+    },
+    
+    gameOver(){
+        app.playerOne.cellSequence = [];
+        app.playerTwo.cellSequence = [];
+        app.redrawBoard();
+        app.createBoard();
+        app.container.insertBefore(app.board, app.playerTwoBx);
+    },
 
+    redrawBoard(){
+        app.board.textContent = '';
+        app.winMessage.textContent = '';
+    },
 };
 
 document.addEventListener('DOMContentLoaded', app.init());
