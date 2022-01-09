@@ -205,23 +205,23 @@ let app = {
             }
             if(app.playerOne.click > 2){
                 if(app.playerOne.getsToPlay === false){
-                    app.youWin(1, app.playerOne.cellSequence);
+                    app.youWin(app.playerOne.name, app.playerOne.cellSequence);
                 }
                 else if(app.playerTwo.getsToPlay === false){
-                    app.youWin(2, app.playerTwo.cellSequence);
+                    app.youWin(app.playerTwo.name, app.playerTwo.cellSequence);
                 }
             }
         }
     },
 
-    youWin(nPlayer, playerSeq){
-        var result = app.wins.some(function(ar) {
+    youWin(player, playerSeq){
+        var winCheck = app.wins.some(function(ar) {
             return ar.every(function(el) {
                 return playerSeq.indexOf(el) != -1;
             });
         });
-        if (result === true){
-            alert(`Player ${nPlayer} Wins !`);
+        if (winCheck === true){
+            alert(`${player} Wins !`);
         }
     }
 
