@@ -49,6 +49,7 @@ let app = {
 
     click: 0,
     cellIndex: [],
+    checkedCells: 0,
     nPartie: 0,
 
     wins: [
@@ -62,6 +63,7 @@ let app = {
         [2, 4, 6],
     ],
     winCheck: false,
+    draw: false,
 
     init(){
         app.createPlayerBx();
@@ -239,45 +241,60 @@ let app = {
                 app.playerOne.getsToPlay = true;
                 app.playerTwo.getsToPlay = false;
             }
-
+            app.checkedCells += 1;
             
-            
-            //calcul condition victoire si joueur 1 à fait au moins 2 mouvements
-            if(app.click > 2){
-                //lance l'évaluation de la victoire à la fin du tour du joueur
-                if(app.playerOne.getsToPlay === false){
-                    app.youWin(app.playerOne, app.playerOne.cellSequence);
+            app.players.forEach(player => {
+                if(app.checkedCells > 2){
+                    app.checkWin(player, player.cellSequence);
                 }
-                else if(app.playerTwo.getsToPlay === false){
-                    app.youWin(app.playerTwo, app.playerTwo.cellSequence);
-                }
-            }
+            });
         }
     },
 
-    youWin(player, playerSeq){
+    checkWin(player, playerSeq){
         app.winCheck = app.wins.some(function(ar) {
             return ar.every(function(el) {
                 return playerSeq.indexOf(el) != -1;
             });
         });
-        if (app.winCheck === true){
-            let winner = player;
-            app.displayWinMessage(winner.name);
-            winner.currentScore += 1;
-            app.nPartie += 1;
-
-            app.players.forEach(player => {
-                let scoreObj = {
-                    partie: app.nPartie,
-                    score: player.currentScore, 
-                };    
-                player.scores.push(scoreObj);
-            });
-
-            app.reset();
-            app.displayScores();
+        if(app.winCheck === true){
+            app.youWin(player);
         }
+        else if(app.winCheck === false && app.checkedCells === 9){
+            app.noWin();
+        }
+    },
+
+    youWin(player){
+        let winner = player;
+        app.displayWinMessage(winner.name);
+        winner.currentScore += 1;
+        app.nPartie += 1;
+
+        app.players.forEach(player => {
+            let scoreObj = {
+                partie: app.nPartie,
+                score: player.currentScore, 
+            };    
+            player.scores.push(scoreObj);
+        });
+
+        app.reset();
+        app.displayScores();
+    },
+
+    noWin(){
+        app.nPartie += 1;
+        app.players.forEach(player => {
+            let scoreObj = {
+                partie: app.nPartie,
+                score: player.currentScore, 
+            };    
+            player.scores.push(scoreObj);
+        });
+        window.setTimeout(app.replay, 2000);
+        app.reset();
+        app.displayScores();
     },
 
     displayWinMessage(player){
@@ -356,6 +373,8 @@ let app = {
 
     reset(){
         app.click = 0;
+        app.checkedCells = 0;
+        app.draw = false;
         app.players.forEach(player =>{
             player.cellSequence = [];
             player.currentScore = 0;
