@@ -80,13 +80,14 @@ form{
 .playerBx{
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     margin: 2rem;
     color: white;
     font-size: 3rem;
 }
 
-.playerNames{
+.playerNames__title{
     color: white;
     font-size: 3rem;
 }
@@ -150,4 +151,39 @@ form{
     font-size: 3rem;
     text-align: center;
     color: white;
+}
+
+.scoreBx{
+    width: 100%;
+    height: 100%;
+    margin: 2rem 0;
+}
+
+.scoreTable{
+    width: 100%;
+    box-shadow: 0px 0px 5px black;
+}
+
+.tableHead{
+    width: 100%;
+}
+
+.headRow{
+    width: 100%;
+}
+
+.headTableCell{
+    width: 50%;
+    background-color: #202020;
+    border: 1px solid black;
+}
+
+.tableBody{
+    width: 100%;
+}
+
+.tableCell{
+    width: 50%;
+    border: 1px solid black;
+    text-align: right;
 }

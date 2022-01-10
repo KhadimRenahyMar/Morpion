@@ -2,8 +2,7 @@ let app = {
     body: null,
     nameBx: null,
     container: null,
-    playerOneBx: null,
-    playerTwoBx: null,
+    playerBx: [],
     board: null,
     form: null,
     firstLabel: null,
@@ -13,24 +12,44 @@ let app = {
     secondLabel: null,
     secondInput: null,
     submitBtn: null,
-    winMessage:null,
 
+    winMessage:null,
+    
+    scoreBx: null,
+    scoreTable: null,
+    tableHead: null,
+    headRow: null,
+    nPartieHeader: null,
+    scoreHeader: null,
+    tableBodies: [],
+    tableBody: null,
+    tableRows: [],
+    tableRow: null,
+
+    
+    players: [],
     playerOne: {
         name: '', 
         symbol: 'cross',
         getsToPlay: true,
         cellSequence: [],
+        currentScore: 0,
+        scores: [],
+        rows: [],
     },
     playerTwo: {
         name: '',
         symbol: 'circle',
         getsToPlay: false,
         cellSequence: [],
+        currentScore: 0,
+        scores: [],
+        rows: [],
     },
 
     click: 0,
-
     cellIndex: [],
+    nPartie: 0,
 
     wins: [
         [0, 1, 2],
@@ -42,6 +61,7 @@ let app = {
         [0, 4, 8],
         [2, 4, 6],
     ],
+    winCheck: false,
 
     init(){
         app.createPlayerBx();
@@ -65,8 +85,9 @@ let app = {
 
         app.firstInput = document.createElement('input');
         app.firstInput.classList.add('input');
+        app.firstInput.setAttribute('id', 'playerOne');
         app.firstInput.type = 'text';
-        app.firstInput.name = 'playerOne';
+        app.firstInput.name = 'players';
 
         app.secondInputBx = document.createElement('div');
         app.secondInputBx.classList.add('inputBx');
@@ -77,8 +98,9 @@ let app = {
 
         app.secondInput = document.createElement('input');
         app.secondInput.classList.add('input');
+        app.secondInput.setAttribute('id', 'playerTwo');
         app.secondInput.type = 'text';
-        app.secondInput.name = 'playerTwo';
+        app.secondInput.name = 'players';
 
         app.submitBtn = document.createElement('button');
         app.submitBtn.textContent = 'Valider';
@@ -100,39 +122,48 @@ let app = {
     },
 
     submitBtnHandler(){
+        app.secondInput.addEventListener('keyup', (e) =>{
+            if(e.keyCode === 13){
+                app.getPlayersName(e);
+            }
+        });
         app.submitBtn.addEventListener('click', app.getPlayersName);
     },
 
     getPlayersName(event){
         event.preventDefault();
-        let firstInput = document.querySelector('input[name=playerOne]');
-        let secondInput = document.querySelector('input[name=playerTwo]');
+        let firstInput = document.querySelector('#playerOne');
+        let secondInput = document.querySelector('#playerTwo');
         app.playerOne.name = firstInput.value;
         app.playerTwo.name = secondInput.value;
 
+        app.players = [app.playerOne, app.playerTwo];
         app.createBoard();
         app.displayPlayerNames();
-        
     },
 
     displayPlayerNames(){
-        app.playerOneBx = document.createElement('div');
-        app.playerOneBx.classList.add('playerBx');
-        app.playerTwoBx = document.createElement('div');
-        app.playerTwoBx.classList.add('playerBx');
+        app.playerBx[0] = document.createElement('div');
+        app.playerBx[0].classList.add('playerBx');
+        app.playerBx[1] = document.createElement('div');
+        app.playerBx[1].classList.add('playerBx');
 
-        app.container.insertBefore(app.playerOneBx, app.board);
-        app.container.insertBefore(app.playerTwoBx, app.board.nextSibling);
+        app.container.insertBefore(app.playerBx[0], app.board);
+        app.container.insertBefore(app.playerBx[1], app.board.nextSibling);
         
         let playerOneName = document.createElement('h3');
-        playerOneName.classList.add('playerNames');
+        playerOneName.classList.add('playerNames__title');
+        playerOneName.setAttribute('id', 'playerTwoName');
         playerOneName.textContent = `Player One : ${app.playerOne.name}`;
-        app.playerOneBx.append(playerOneName);
+        app.playerBx[0].append(playerOneName);
 
         let playerTwoName = document.createElement('h3');
-        playerTwoName.classList.add('playerNames');
+        playerTwoName.classList.add('playerNames__title');
+        playerTwoName.setAttribute('id', 'playerTwoName');
         playerTwoName.textContent = `Player Two: ${app.playerTwo.name}`;
-        app.playerTwoBx.append(playerTwoName);
+        app.playerBx[1].append(playerTwoName);
+
+        app.createScoreTables();
     },
 
     createBoard(){
@@ -161,11 +192,10 @@ let app = {
     },
     
     displayBoard(){
-        app.container.append(app.board);
 
+        app.container.insertBefore(app.board, app.playerBx[1]);
         app.cellClickHandler();
     },
-
 
     createCross(){
         let crossEl = document.createElement('div');
@@ -192,50 +222,61 @@ let app = {
                 let cross = app.createCross();
                 cell.append(cross);
                 cell.isChecked = true;
+                app.playerOne.cellSequence.push(cell.value);
                 //compteur d'interaction
                 app.click += 1;
-                app.playerOne.cellSequence.push(cell.value);
-                
                 app.playerOne.getsToPlay = false;
                 app.playerTwo.getsToPlay = true;
             }
             else{
                 let circle = app.createCircle();
                 cell.append(circle);
-
+                //compteur d'interaction
+                app.click += 1;
                 cell.isChecked = true;
                 app.playerTwo.cellSequence.push(cell.value);
 
                 app.playerOne.getsToPlay = true;
                 app.playerTwo.getsToPlay = false;
             }
+
+            
+            
             //calcul condition victoire si joueur 1 à fait au moins 2 mouvements
             if(app.click > 2){
                 //lance l'évaluation de la victoire à la fin du tour du joueur
                 if(app.playerOne.getsToPlay === false){
-                    app.youWin(app.playerOne.name, app.playerOne.cellSequence);
+                    app.youWin(app.playerOne, app.playerOne.cellSequence);
                 }
                 else if(app.playerTwo.getsToPlay === false){
-                    app.youWin(app.playerTwo.name, app.playerTwo.cellSequence);
+                    app.youWin(app.playerTwo, app.playerTwo.cellSequence);
                 }
             }
         }
     },
 
     youWin(player, playerSeq){
-        var winCheck = app.wins.some(function(ar) {
+        app.winCheck = app.wins.some(function(ar) {
             return ar.every(function(el) {
                 return playerSeq.indexOf(el) != -1;
             });
         });
-        if (winCheck === true){
-            console.log(`${player} Wins !`);
+        if (app.winCheck === true){
             let winner = player;
-            app.displayWinMessage(winner);
-            let replay = confirm('Voulez-vous rejouer?');
-            if(replay === true){
-                app.gameOver();
-            }
+            app.displayWinMessage(winner.name);
+            winner.currentScore += 1;
+            app.nPartie += 1;
+
+            app.players.forEach(player => {
+                let scoreObj = {
+                    partie: app.nPartie,
+                    score: player.currentScore, 
+                };    
+                player.scores.push(scoreObj);
+            });
+
+            app.reset();
+            app.displayScores();
         }
     },
 
@@ -244,19 +285,93 @@ let app = {
         app.winMessage.textContent = `${player} wins !`;
         app.winMessage.classList.add('winMessage');
         app.body.insertBefore(app.winMessage, app.container);
-    },
-    
-    gameOver(){
-        app.playerOne.cellSequence = [];
-        app.playerTwo.cellSequence = [];
-        app.redrawBoard();
-        app.createBoard();
-        app.container.insertBefore(app.board, app.playerTwoBx);
+        window.setTimeout(app.replay, 5000);
     },
 
+    createScoreTables(){
+        app.playerBx.forEach(bx => {
+            app.scoreBx = document.createElement('div');
+            app.scoreBx.classList.add('scoreBx');
+            bx.append(app.scoreBx);
+
+            app.scoreTable = document.createElement('table');
+            app.scoreTable.classList.add('scoreTable');
+            app.tableHead = document.createElement('thead');
+            app.tableHead.classList.add('tableHead');
+            app.headRow = document.createElement('tr');
+            app.headRow.classList.add('headRow');
+            app.tableHead.append(app.headRow);
+            app.nPartieHeader = document.createElement('th');
+            app.nPartieHeader.scope = 'col';
+            app.nPartieHeader.classList.add('headTableCell');
+            app.scoreHeader = document.createElement('th');
+            app.scoreHeader.scope = 'col';
+            app.scoreHeader.classList.add('headTableCell');
+            app.scoreHeader.textContent = 'Score';
+
+            app.tableBody = document.createElement('tbody');
+            app.tableBody.classList.add('tableBody');
+            app.scoreBx.append(app.scoreTable);
+            app.headRow.append(app.nPartieHeader, app.scoreHeader);
+            app.scoreTable.append(app.tableHead, app.tableBody);
+            app.tableBodies.push(app.tableBody);
+        });
+    },
+    
+    displayScores(){
+
+        app.players.forEach(player => {
+            player.scores.forEach(obj => {
+                app.tableRow = document.createElement('tr');
+                app.tableRow.classList.add('tableRow');
+
+                let partieCell = document.createElement('td');
+                partieCell.classList.add('tableCell');
+                partieCell.textContent = `Partie ${obj.partie}`;
+                
+                let scoreCell = document.createElement('td');
+                scoreCell.classList.add('tableCell');
+                scoreCell.textContent = obj.score;
+
+                app.tableRow.append(partieCell, scoreCell);
+                player.rows.push(app.tableRow);                            
+            });
+        });
+        app.playerOne.rows.forEach(row => {
+            app.tableBodies[0].append(row);    
+        });
+        app.playerTwo.rows.forEach(row =>{
+            app.tableBodies[1].append(row);
+        });
+    },
+
+    replay(){
+        let replay = confirm('Voulez-vous rejouer?');
+        if(replay === true){
+            app.reset();
+            app.redrawBoard();
+            
+        }
+    },
+
+    reset(){
+        app.click = 0;
+        app.players.forEach(player =>{
+            player.cellSequence = [];
+            player.currentScore = 0;
+            player.rows = [];
+        });
+        app.winCheck = false;
+        app.tableBodies[0].textContent = '';
+        app.tableBodies[1].textContent = '';
+    },
+    
     redrawBoard(){
         app.board.textContent = '';
+        app.winMessage.remove();
         app.winMessage.textContent = '';
+        app.createBoard();
+        app.displayScores();
     },
 };
 
