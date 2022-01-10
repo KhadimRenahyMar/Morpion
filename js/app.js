@@ -47,7 +47,6 @@ let app = {
         rows: [],
     },
 
-    click: 0,
     cellIndex: [],
     checkedCells: 0,
     nPartie: 0,
@@ -225,16 +224,12 @@ let app = {
                 cell.append(cross);
                 cell.isChecked = true;
                 app.playerOne.cellSequence.push(cell.value);
-                //compteur d'interaction
-                app.click += 1;
                 app.playerOne.getsToPlay = false;
                 app.playerTwo.getsToPlay = true;
             }
             else{
                 let circle = app.createCircle();
                 cell.append(circle);
-                //compteur d'interaction
-                app.click += 1;
                 cell.isChecked = true;
                 app.playerTwo.cellSequence.push(cell.value);
 
