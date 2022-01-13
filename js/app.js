@@ -108,9 +108,9 @@ let app = {
         app.submitBtn.classList.add('button');
         app.submitBtn.type = 'button';
         app.submitBtn.value = 'submit';
-
         app.displayNameBx();
     },
+
 
     displayNameBx(){
         app.body.insertBefore(app.nameBx, app.container);
@@ -131,6 +131,10 @@ let app = {
         app.submitBtn.addEventListener('click', app.getPlayersName);
     },
 
+    disablePlayerBx(){
+        app.nameBx.remove();
+    },
+
     getPlayersName(event){
         event.preventDefault();
         let firstInput = document.querySelector('#playerOne');
@@ -141,6 +145,7 @@ let app = {
         app.players = [app.playerOne, app.playerTwo];
         app.createBoard();
         app.displayPlayerNames();
+        app.disablePlayerBx();
     },
 
     displayPlayerNames(){
@@ -297,7 +302,7 @@ let app = {
         app.winMessage.textContent = `${player} wins !`;
         app.winMessage.classList.add('winMessage');
         app.body.insertBefore(app.winMessage, app.container);
-        window.setTimeout(app.replay, 5000);
+        window.setTimeout(app.replay, 2000);
     },
 
     createScoreTables(){
