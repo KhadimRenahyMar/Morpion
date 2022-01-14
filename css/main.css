@@ -117,6 +117,10 @@ form{
     align-items: center;
 }
 
+.cell:hover{
+    background-color: rgba(0,0,0, 0.5);
+}
+
 .circle{
     width: 5vw;
     height: 5vw;

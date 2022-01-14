@@ -6,6 +6,8 @@ let app = {
         container: null,
         playerBx: [],
         board: null,
+        cross: null,
+        circle: null,
 
         form: null,
         firstLabel: null,
@@ -68,6 +70,7 @@ let app = {
         [2, 4, 6],
     ],
     winCheck: false,
+    gameEnd: false,
     winMessage:null,
     draw: false,
 
@@ -243,18 +246,19 @@ let app = {
 
     turns(event){
         let cell = event.target;
-        if(cell.isChecked === false){
+        if(cell.isChecked === false && app.gameEnd === false){
+            console.log(app.winCheck);
             if(app.playerOne.getsToPlay === true){
-                let cross = app.createCross();
-                cell.append(cross);
+                app.el.cross = app.createCross();
+                cell.append(app.el.cross);
                 cell.isChecked = true;
                 app.playerOne.cellSequence.push(cell.value);
                 app.playerOne.getsToPlay = false;
                 app.playerTwo.getsToPlay = true;
             }
             else{
-                let circle = app.createCircle();
-                cell.append(circle);
+                app.el.circle = app.createCircle();
+                cell.append(app.el.circle);
                 cell.isChecked = true;
                 app.playerTwo.cellSequence.push(cell.value);
 
@@ -278,9 +282,11 @@ let app = {
             });
         });
         if(app.winCheck === true){
+            app.gameEnd = true;
             app.youWin(player);
         }
         else if(app.winCheck === false && app.checkedCells === 9){
+            app.gameEnd = true;
             app.noWin();
         }
     },
@@ -410,6 +416,7 @@ let app = {
         app.winMessage.textContent = '';
         app.createBoard();
         app.displayScores();
+        app.gameEnd = false;
     },
 };
 
