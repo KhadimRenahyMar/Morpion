@@ -100,6 +100,7 @@ let app = {
         app.el.firstInput.type = 'text';
         app.el.firstInput.name = 'players';
         app.el.firstInput.autocomplete = 'off';
+        app.el.firstInput.required = true;
 
         app.el.secondInputBx = document.createElement('div');
         app.el.secondInputBx.classList.add('inputBx');
@@ -114,6 +115,7 @@ let app = {
         app.el.secondInput.type = 'text';
         app.el.secondInput.name = 'players';
         app.el.secondInput.autocomplete = 'off';
+        app.el.secondInput.required = true;
 
         app.el.submitBtn = document.createElement('button');
         app.el.submitBtn.textContent = 'Valider';
@@ -143,7 +145,7 @@ let app = {
         app.el.submitBtn.addEventListener('click', app.getPlayersName);
     },
 
-    disablePlayerBx(){
+    disableNameBx(){
         app.el.nameBx.remove();
     },
 
@@ -157,7 +159,7 @@ let app = {
         app.players = [app.playerOne, app.playerTwo];
         app.createBoard();
         app.createPlayerNames();
-        app.disablePlayerBx();
+        app.disableNameBx();
     },
 
     createPlayerNames(){
@@ -221,7 +223,6 @@ let app = {
     },
     
     displayBoard(){
-
         app.el.container.insertBefore(app.el.board, app.el.playerBx[1]);
         app.cellClickHandler();
     },
