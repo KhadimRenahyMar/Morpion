@@ -1,31 +1,37 @@
 let app = {
-    body: null,
-    nameBx: null,
-    container: null,
-    playerBx: [],
-    board: null,
-    form: null,
-    firstLabel: null,
-    firstInputBx: null, 
-    firstInput: null,
-    secondInputBx: null,
-    secondLabel: null,
-    secondInput: null,
-    submitBtn: null,
 
-    winMessage:null,
-    
-    scoreBx: null,
-    scoreTable: null,
-    tableHead: null,
-    headRow: null,
-    nPartieHeader: null,
-    scoreHeader: null,
-    tableBodies: [],
-    tableBody: null,
-    tableRows: [],
-    tableRow: null,
+    el: {
+        body: null,
+        nameBx: null,
+        container: null,
+        playerBx: [],
+        board: null,
 
+        form: null,
+        firstLabel: null,
+        firstInputBx: null, 
+        firstInput: null,
+        secondInputBx: null,
+        secondLabel: null,
+        secondInput: null,
+        submitBtn: null,
+        
+        scoreBx: null,
+        scoreTable: null,
+        tableHead: null,
+        headRow: null,
+        nPartieHeader: null,
+        scoreHeader: null,
+        tableBodies: [],
+        tableBody: null,
+        tableRows: [],
+        tableRow: null,
+    },
+
+    mQueries:{
+        desktop: window.matchMedia('max-width: 1600px'),
+        phones: window.matchMedia('(max-width: 980px)'),
+    },
     
     players: [],
     playerOne: {
@@ -62,6 +68,7 @@ let app = {
         [2, 4, 6],
     ],
     winCheck: false,
+    winMessage:null,
     draw: false,
 
     init(){
@@ -70,69 +77,71 @@ let app = {
     },
 
     createPlayerBx(){
-        app.body = document.querySelector('.body');
-        app.nameBx = document.querySelector('.nameBx');
-        app.container = document.querySelector('.container');
+        app.el.body = document.querySelector('.body');
+        app.el.nameBx = document.querySelector('.nameBx');
+        app.el.container = document.querySelector('.container');
 
-        app.form = document.createElement('form');
-        app.form.classList.add('form');
+        app.el.form = document.createElement('form');
+        app.el.form.classList.add('form');
 
-        app.firstInputBx = document.createElement('div');
-        app.firstInputBx.classList.add('inputBx');
+        app.el.firstInputBx = document.createElement('div');
+        app.el.firstInputBx.classList.add('inputBx');
         
-        app.firstLabel = document.createElement('label');
-        app.firstLabel.textContent = 'Joueur 1';
-        app.firstLabel.classList.add('label');
+        app.el.firstLabel = document.createElement('label');
+        app.el.firstLabel.textContent = 'Joueur 1';
+        app.el.firstLabel.classList.add('label');
 
-        app.firstInput = document.createElement('input');
-        app.firstInput.classList.add('input');
-        app.firstInput.setAttribute('id', 'playerOne');
-        app.firstInput.type = 'text';
-        app.firstInput.name = 'players';
+        app.el.firstInput = document.createElement('input');
+        app.el.firstInput.classList.add('input');
+        app.el.firstInput.setAttribute('id', 'playerOne');
+        app.el.firstInput.type = 'text';
+        app.el.firstInput.name = 'players';
+        app.el.firstInput.autocomplete = 'off';
 
-        app.secondInputBx = document.createElement('div');
-        app.secondInputBx.classList.add('inputBx');
+        app.el.secondInputBx = document.createElement('div');
+        app.el.secondInputBx.classList.add('inputBx');
         
-        app.secondLabel = document.createElement('label');
-        app.secondLabel.textContent = 'Joueur 2';
-        app.secondLabel.classList.add('label');
+        app.el.secondLabel = document.createElement('label');
+        app.el.secondLabel.textContent = 'Joueur 2';
+        app.el.secondLabel.classList.add('label');
 
-        app.secondInput = document.createElement('input');
-        app.secondInput.classList.add('input');
-        app.secondInput.setAttribute('id', 'playerTwo');
-        app.secondInput.type = 'text';
-        app.secondInput.name = 'players';
+        app.el.secondInput = document.createElement('input');
+        app.el.secondInput.classList.add('input');
+        app.el.secondInput.setAttribute('id', 'playerTwo');
+        app.el.secondInput.type = 'text';
+        app.el.secondInput.name = 'players';
+        app.el.secondInput.autocomplete = 'off';
 
-        app.submitBtn = document.createElement('button');
-        app.submitBtn.textContent = 'Valider';
-        app.submitBtn.classList.add('button');
-        app.submitBtn.type = 'button';
-        app.submitBtn.value = 'submit';
+        app.el.submitBtn = document.createElement('button');
+        app.el.submitBtn.textContent = 'Valider';
+        app.el.submitBtn.classList.add('button');
+        app.el.submitBtn.type = 'button';
+        app.el.submitBtn.value = 'submit';
         app.displayNameBx();
     },
 
 
     displayNameBx(){
-        app.body.insertBefore(app.nameBx, app.container);
-        app.nameBx.append(app.form);
-        app.form.append(app.firstInputBx);
-        app.firstInputBx.append(app.firstLabel, app.firstInput);
-        app.form.append(app.secondInputBx);
-        app.secondInputBx.append(app.secondLabel, app.secondInput);
-        app.form.append(app.submitBtn);
+        app.el.body.insertBefore(app.el.nameBx, app.el.container);
+        app.el.nameBx.append(app.el.form);
+        app.el.form.append(app.el.firstInputBx);
+        app.el.firstInputBx.append(app.el.firstLabel, app.el.firstInput);
+        app.el.form.append(app.el.secondInputBx);
+        app.el.secondInputBx.append(app.el.secondLabel, app.el.secondInput);
+        app.el.form.append(app.el.submitBtn);
     },
 
     submitBtnHandler(){
-        app.secondInput.addEventListener('keyup', (e) =>{
+        app.el.secondInput.addEventListener('keyup', (e) =>{
             if(e.keyCode === 13){
                 app.getPlayersName(e);
             }
         });
-        app.submitBtn.addEventListener('click', app.getPlayersName);
+        app.el.submitBtn.addEventListener('click', app.getPlayersName);
     },
 
     disablePlayerBx(){
-        app.nameBx.remove();
+        app.el.nameBx.remove();
     },
 
     getPlayersName(event){
@@ -144,37 +153,48 @@ let app = {
 
         app.players = [app.playerOne, app.playerTwo];
         app.createBoard();
-        app.displayPlayerNames();
+        app.createPlayerNames();
         app.disablePlayerBx();
     },
 
-    displayPlayerNames(){
-        app.playerBx[0] = document.createElement('div');
-        app.playerBx[0].classList.add('playerBx');
-        app.playerBx[1] = document.createElement('div');
-        app.playerBx[1].classList.add('playerBx');
+    createPlayerNames(){
+        app.el.playerBx[0] = document.createElement('div');
+        app.el.playerBx[0].classList.add('playerBx');
+        app.el.playerBx[1] = document.createElement('div');
+        app.el.playerBx[1].classList.add('playerBx');
 
-        app.container.insertBefore(app.playerBx[0], app.board);
-        app.container.insertBefore(app.playerBx[1], app.board.nextSibling);
-        
+        app.displayPlayerNames();
+
         let playerOneName = document.createElement('h3');
         playerOneName.classList.add('playerNames__title');
         playerOneName.setAttribute('id', 'playerTwoName');
-        playerOneName.textContent = `Player One : ${app.playerOne.name}`;
-        app.playerBx[0].append(playerOneName);
+        playerOneName.textContent = `${app.playerOne.name}`;
+        app.el.playerBx[0].append(playerOneName);
 
         let playerTwoName = document.createElement('h3');
         playerTwoName.classList.add('playerNames__title');
         playerTwoName.setAttribute('id', 'playerTwoName');
-        playerTwoName.textContent = `Player Two: ${app.playerTwo.name}`;
-        app.playerBx[1].append(playerTwoName);
+        playerTwoName.textContent = `${app.playerTwo.name}`;
+        app.el.playerBx[1].append(playerTwoName);
 
         app.createScoreTables();
     },
 
+    displayPlayerNames(){
+        if(app.mQueries.phones.matches){
+            app.el.container.append(app.el.playerBx[0]);
+            app.el.container.append(app.el.playerBx[1]);
+        }
+        else{
+            app.el.container.insertBefore(app.el.playerBx[0], app.el.board);
+            app.el.container.insertBefore(app.el.playerBx[1], app.el.board.nextSibling);    
+        }
+        
+    },
+
     createBoard(){
-        app.board = document.querySelector('.board');
-        app.board.classList.add('c-morpion');
+        app.el.board = document.querySelector('.board');
+        app.el.board.classList.add('c-morpion');
         let row = 3;
         let cells = 3;
         let nCell = -1;
@@ -182,7 +202,7 @@ let app = {
         for(let rowIndex = 0; rowIndex < row; rowIndex++){
             let nRow = document.createElement('div');
             nRow.classList.add('row');
-            app.board.append(nRow);
+            app.el.board.append(nRow);
 
             for(let xCell = 0; xCell < cells; xCell++){
                 let cell = document.createElement('div');
@@ -199,7 +219,7 @@ let app = {
     
     displayBoard(){
 
-        app.container.insertBefore(app.board, app.playerBx[1]);
+        app.el.container.insertBefore(app.el.board, app.el.playerBx[1]);
         app.cellClickHandler();
     },
 
@@ -216,8 +236,8 @@ let app = {
     },
 
     cellClickHandler(){
-        app.cellIndex.forEach(el => {
-            el.addEventListener('click', app.turns);
+        app.cellIndex.forEach(elm => {
+            elm.addEventListener('click', app.turns);
         });
     },
 
@@ -253,8 +273,8 @@ let app = {
 
     checkWin(player, playerSeq){
         app.winCheck = app.wins.some(function(ar) {
-            return ar.every(function(el) {
-                return playerSeq.indexOf(el) != -1;
+            return ar.every(function(elm) {
+                return playerSeq.indexOf(elm) != -1;
             });
         });
         if(app.winCheck === true){
@@ -301,64 +321,64 @@ let app = {
         app.winMessage = document.createElement('h3');
         app.winMessage.textContent = `${player} wins !`;
         app.winMessage.classList.add('winMessage');
-        app.body.insertBefore(app.winMessage, app.container);
+        app.el.body.insertBefore(app.winMessage, app.el.container);
         window.setTimeout(app.replay, 2000);
     },
 
     createScoreTables(){
-        app.playerBx.forEach(bx => {
-            app.scoreBx = document.createElement('div');
-            app.scoreBx.classList.add('scoreBx');
-            bx.append(app.scoreBx);
+        app.el.playerBx.forEach(bx => {
+            app.el.scoreBx = document.createElement('div');
+            app.el.scoreBx.classList.add('scoreBx');
+            bx.append(app.el.scoreBx);
 
-            app.scoreTable = document.createElement('table');
-            app.scoreTable.classList.add('scoreTable');
-            app.tableHead = document.createElement('thead');
-            app.tableHead.classList.add('tableHead');
-            app.headRow = document.createElement('tr');
-            app.headRow.classList.add('headRow');
-            app.tableHead.append(app.headRow);
-            app.nPartieHeader = document.createElement('th');
-            app.nPartieHeader.scope = 'col';
-            app.nPartieHeader.classList.add('headTableCell');
-            app.scoreHeader = document.createElement('th');
-            app.scoreHeader.scope = 'col';
-            app.scoreHeader.classList.add('headTableCell');
-            app.scoreHeader.textContent = 'Score';
+            app.el.scoreTable = document.createElement('table');
+            app.el.scoreTable.classList.add('scoreTable');
+            app.el.tableHead = document.createElement('thead');
+            app.el.tableHead.classList.add('tableHead');
+            app.el.headRow = document.createElement('tr');
+            app.el.headRow.classList.add('headRow');
+            app.el.tableHead.append(app.el.headRow);
+            app.el.nPartieHeader = document.createElement('th');
+            app.el.nPartieHeader.scope = 'col';
+            app.el.nPartieHeader.classList.add('headTableCell');
+            app.el.scoreHeader = document.createElement('th');
+            app.el.scoreHeader.scope = 'col';
+            app.el.scoreHeader.classList.add('headTableCell');
+            app.el.scoreHeader.textContent = 'Score';
 
-            app.tableBody = document.createElement('tbody');
-            app.tableBody.classList.add('tableBody');
-            app.scoreBx.append(app.scoreTable);
-            app.headRow.append(app.nPartieHeader, app.scoreHeader);
-            app.scoreTable.append(app.tableHead, app.tableBody);
-            app.tableBodies.push(app.tableBody);
+            app.el.tableBody = document.createElement('tbody');
+            app.el.tableBody.classList.add('tableBody');
+            app.el.scoreBx.append(app.el.scoreTable);
+            app.el.headRow.append(app.el.nPartieHeader, app.el.scoreHeader);
+            app.el.scoreTable.append(app.el.tableHead, app.el.tableBody);
+            app.el.tableBodies.push(app.el.tableBody);
         });
     },
     
     displayScores(){
-
         app.players.forEach(player => {
             player.scores.forEach(obj => {
-                app.tableRow = document.createElement('tr');
-                app.tableRow.classList.add('tableRow');
+                app.el.tableRow = document.createElement('tr');
+                app.el.tableRow.classList.add('tableRow');
 
                 let partieCell = document.createElement('td');
                 partieCell.classList.add('tableCell');
+                partieCell.style.textAlign = 'left';
                 partieCell.textContent = `Partie ${obj.partie}`;
                 
                 let scoreCell = document.createElement('td');
                 scoreCell.classList.add('tableCell');
                 scoreCell.textContent = obj.score;
 
-                app.tableRow.append(partieCell, scoreCell);
-                player.rows.push(app.tableRow);                            
+                app.el.tableRow.append(partieCell, scoreCell);
+                player.rows.push(app.el.tableRow);
             });
         });
         app.playerOne.rows.forEach(row => {
-            app.tableBodies[0].append(row);    
+            app.el.tableBodies[0].append(row);    
         });
         app.playerTwo.rows.forEach(row =>{
-            app.tableBodies[1].append(row);
+            app.el.tableBodies[1].append(row);
         });
     },
 
@@ -372,7 +392,6 @@ let app = {
     },
 
     reset(){
-        app.click = 0;
         app.checkedCells = 0;
         app.draw = false;
         app.players.forEach(player =>{
@@ -381,12 +400,12 @@ let app = {
             player.rows = [];
         });
         app.winCheck = false;
-        app.tableBodies[0].textContent = '';
-        app.tableBodies[1].textContent = '';
+        app.el.tableBodies[0].textContent = '';
+        app.el.tableBodies[1].textContent = '';
     },
     
     redrawBoard(){
-        app.board.textContent = '';
+        app.el.board.textContent = '';
         app.winMessage.remove();
         app.winMessage.textContent = '';
         app.createBoard();
