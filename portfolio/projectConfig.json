@@ -1,11 +1,23 @@
 {
-  "url": "https://khadimrenahymar.github.io/Morpion/",
-  "coverURL": "https://raw.githubusercontent.com/KhadimRenahyMar/Morpion/main/portfolio/MorpionCover.png",
-  "size": "S",
-  "techs": [
-    "Javascript",
-    "HTML",
-    "CSS"
-  ],
-  "packages": []
+    "url": "https://khadimrenahymar.github.io/Morpion/",
+    "coverURL": "https://raw.githubusercontent.com/KhadimRenahyMar/Morpion/main/portfolio/MorpionCover.png",
+    "size": "S",
+    "techs": [
+        {
+            "name": "Javascript",
+            "packages": []
+        },
+        {
+            "name": "HTML",
+            "packages": []
+        },
+        {
+            "name": "CSS",
+            "packages": []
+        }
+    ],
+    "designPatterns": [
+    ],
+    "components": [
+    ]
 }
